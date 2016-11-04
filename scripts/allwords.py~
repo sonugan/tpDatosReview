@@ -1,3 +1,8 @@
+##Toma el archivo train.csv y extrae todas las palabras eliminando los signos de puntuacion y los codigos html
+###y convierte cada una a minusculas
+##Entrada: train.csv
+##Salida: allwords.w
+
 # -*- coding: utf-8 -*-,
 import csv
 import sys
