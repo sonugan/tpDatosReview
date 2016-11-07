@@ -16,24 +16,27 @@ from nltk.corpus import stopwords
 
 stopwordlist = stopwords.words('english')
 
-with open('../words/allwords.w', 'r') as filer:
-    	with codecs.open('../words/nonstopwords.w', 'wb', encoding='utf-8') as vwfile:
+stopwords1 = {}
+with open('../words/nonstopwords.w', 'r') as filer:
+    	with codecs.open('../words/nonstopwords+3.w', 'wb', encoding='utf-8') as vwfile:
 		for w in filer.readlines():
-			ws = w[:w.index(':')]
-			if(unicode(ws,'utf-8') not in stopwordlist):
+			ws = float(w[w.index(':')+1:])
+			if(ws > 3):
+				stopwords1[w[:w.index(':')]] = ws
 				vwfile.write(unicode(w,'utf-8'))
-    
+
+
 print("Fin words")
 
 count = 0
-with open('../words/allwords_cleaned_test.c', 'r') as filer:
-    	with codecs.open('../words/nonstopwords_cleaned_train.c', 'wb', encoding='utf-8') as vwfile:
+with open('../words/nonstopwords_cleaned_test.c', 'r') as filer:
+    	with codecs.open('../words/nonstopwords+3_cleaned_test.c', 'wb', encoding='utf-8') as vwfile:
 		for line in filer.readlines():
 			if(count % 1000 == 0):
 				print(count)
 			cleanedLine = []
 			for w in line.split():
-				if(unicode(w,'utf-8') not in stopwordlist):
+				if(stopwords1.setdefault(unicode(w,'utf-8'), -1) > -1):
 					cleanedLine.append(w)
 			vwfile.write(unicode(' '.join(cleanedLine) + '\n','utf-8'))
 			count+=1

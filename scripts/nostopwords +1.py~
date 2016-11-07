@@ -16,18 +16,17 @@ from nltk.corpus import stopwords
 
 stopwordlist = stopwords.words('english')
 
-with open('../words/allwords.w', 'r') as filer:
-    	with codecs.open('../words/nonstopwords.w', 'wb', encoding='utf-8') as vwfile:
+with open('../words/nonstopwords.w', 'r') as filer:
+    	with codecs.open('../words/nonstopwords+1.w', 'wb', encoding='utf-8') as vwfile:
 		for w in filer.readlines():
-			ws = w[:w.index(':')]
-			if(unicode(ws,'utf-8') not in stopwordlist):
+			if(unicode(w,'utf-8') not in stopwordlist):
 				vwfile.write(unicode(w,'utf-8'))
     
 print("Fin words")
 
 count = 0
-with open('../words/allwords_cleaned_test.c', 'r') as filer:
-    	with codecs.open('../words/nonstopwords_cleaned_train.c', 'wb', encoding='utf-8') as vwfile:
+with open('../words/nonstopwords_cleaned_test.c', 'r') as filer:
+    	with codecs.open('../words/nonstopwords+1_cleaned_test.c', 'wb', encoding='utf-8') as vwfile:
 		for line in filer.readlines():
 			if(count % 1000 == 0):
 				print(count)

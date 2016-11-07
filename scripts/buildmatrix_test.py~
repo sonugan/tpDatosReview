@@ -1,0 +1,26 @@
+##Quita del archivo allwords.w todas las stopwords
+###Entrada: allwords.w
+###Salida: nonstopwords.w
+
+# -*- coding: utf-8 -*-,
+import sys
+import re
+import codecs
+import numpy as np
+from scipy.sparse import csr_matrix
+
+indptr = [0]
+indices = []
+data = []
+vocabulary = {}
+
+with open('../words/allwords_cleaned_test.c', 'r') as filer:
+	for d in filer.readlines():
+		for term in d:
+			index = vocabulary.setdefault(term, len(vocabulary))
+			indices.append(index)
+			data.append(1)
+			indptr.append(len(indices))
+csr_matrix((data, indices, indptr), dtype=int).toarray()
+
+print("Fin")

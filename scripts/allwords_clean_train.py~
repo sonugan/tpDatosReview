@@ -1,7 +1,7 @@
-##Toma el archivo train.csv y extrae todas las palabras eliminando los signos de puntuacion y los codigos html
-###y convierte cada una a minusculas
+##Toma el archivo train.csv y limpia las palabras, eliminando los signos de puntuacion, los codigos html y los numeros
+###y convierte cada palabra a minusculas
 ##Entrada: train.csv
-##Salida: allwords.w
+##Salida: allwords_cleaned_test.c
 
 # -*- coding: utf-8 -*-,
 import csv
@@ -26,9 +26,9 @@ def cleanhtml(raw_html):
 
 def countWords(line):
 	text = cleanhtml(line)
-	text = re.sub(r'^\w*\d\w*','', text) #elimino todas las palabras con numeros en medio
-	text = re.sub(r'[^\w\s]','', text) #elimino los signos de puntuacion
-	filtered = [w.lower().encode('utf-8') for w in TweetTokenizer().tokenize(text)]
+	text = re.sub(r'\w*\d\w*', '', text).strip()#remove numbers
+	nonPunct = re.compile(".*[A-Za-z0-9].*")
+	filtered = [w.lower().encode('utf-8') for w in TweetTokenizer().tokenize(text) if nonPunct.match(w)]
 	return filtered
     
 def saveWords():
@@ -41,19 +41,21 @@ count = 0
 words = {}
 
 with open('../../Data/train.csv', 'r') as csvfile1:
+    with codecs.open('../words/allwords_cleaned_test.c', 'wb', encoding='utf-8') as vwfile:
 	spamreader = csv.reader(csvfile1)
 	for rowlist in spamreader:
 		if(count % 1000 == 0):
 			print(count)
 		if(count > 0):
-			for w in countWords(rowlist[9]):
+			'''for w in countWords(rowlist[9]):
 				if w in words:			
 					words[w]+=1
 				if not w in words:
-					words[w] = 1
+					words[w] = 1'''
+			vwfile.write(unicode(' '.join(countWords(rowlist[9])),'utf-8') + u'\n')
 
 		count = count + 1
 
 print("Fin lectura")            
-saveWords()
+#saveWords()
 print("Fin")

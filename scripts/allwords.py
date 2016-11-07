@@ -13,7 +13,6 @@ import codecs
 from collections import Counter
 from nltk.tokenize import TweetTokenizer
 from nltk.tokenize import MWETokenizer
-from nltk.corpus import stopwords
 
 csv.field_size_limit(sys.maxsize)
     
@@ -26,8 +25,9 @@ def cleanhtml(raw_html):
 
 def countWords(line):
 	text = cleanhtml(line)
-	nonPunct = re.compile(".*[A-Za-z0-9].*")
-	filtered = [w.lower().encode('utf-8') for w in TweetTokenizer().tokenize(text) if nonPunct.match(w)]
+	text = re.sub(r'^\w*\d\w*','', text) #elimino todas las palabras con numeros en medio
+	text = re.sub(r'[^\w\s]','', text) #elimino los signos de puntuacion
+	filtered = [w.lower().encode('utf-8') for w in TweetTokenizer().tokenize(text)]
 	return filtered
     
 def saveWords():
