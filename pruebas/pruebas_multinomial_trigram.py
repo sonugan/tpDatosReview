@@ -155,40 +155,40 @@ def genESMIN3LEMMA(data_train, ngram):
 ### SP
 
 print('Scores SP')
-allScores.append(['SP'] + calcScores(alphas, genSP(data, 2), target))
+allScores.append(['SP'] + calcScores(alphas, genSP(data, 3), target))
 
 #### ES
 print('Scores ES')
-allScores.append(['ES'] + calcScores(alphas, genES(data,2), target))
+allScores.append(['ES'] + calcScores(alphas, genES(data,3), target))
 
 #### MIN3
 print('Scores MIN3')
-allScores.append(['MIN3'] + calcScores(alphas, genMIN3(data, 2), target))
+allScores.append(['MIN3'] + calcScores(alphas, genMIN3(data, 3), target))
 
 #### ES + MIN3
 print('Scores ES + MIN3')
-allScores.append(['ES + MIN3'] + calcScores(alphas, genESMIN3(data,2), target))
+allScores.append(['ES + MIN3'] + calcScores(alphas, genESMIN3(data,3), target))
 
 #### STEM
 print('Scores STEM')
-allScores.append(['STEM'] + calcScores(alphas, genSTEM(data,2), target))
+allScores.append(['STEM'] + calcScores(alphas, genSTEM(data,3), target))
 
 #### LEMMA
 print('Scores LEMMA')
-allScores.append(['LEMMA'] + calcScores(alphas, genLEMMA(data,2), target))
+allScores.append(['LEMMA'] + calcScores(alphas, genLEMMA(data,3), target))
 
 #### ES + MIN3 + STEM
 print('Scores ES + MIN3 + STEM')
-allScores.append(['ES + MIN3 + STEM'] + calcScores(alphas, genESMIN3STEM(data, 2), target))
+allScores.append(['ES + MIN3 + STEM'] + calcScores(alphas, genESMIN3STEM(data, 3), target))
 
 
 #### ES + MIN3 + LEMMA
 print('Scores ES + MIN3 + LEMMA')
-allScores.append(['ES + MIN3 + LEMMA'] + calcScores(alphas, genESMIN3LEMMA(data,2), target))
+allScores.append(['ES + MIN3 + LEMMA'] + calcScores(alphas, genESMIN3LEMMA(data, 3), target))
 
 
 ####Guardo los datos obtenidos
-with open('scores_train_multinomial_bigram.csv', 'wb') as csvfile2:
+with open('scores_train_multinomial_trigram.csv', 'wb') as csvfile2:
 	writer = csv.writer(csvfile2)
 	for score in allScores:
        		writer.writerow(score)

@@ -84,6 +84,19 @@ def genMIN3(data_train, data_test):
 	x_new_counts_tfidf = tfidf_transformer.transform(x_new_counts)
 	return X_train_tfidf, x_new_counts_tfidf
 
+## Genera la matriz para MIN3 BIGR
+def genMIN3BIGR(data_train, data_test, ngram):
+	count_vect = CountVectorizer(min_df = 3, ngram_range=(ngram,ngram))
+	x_train_counts = count_vect.fit_transform(data_train)
+
+	tfidf_transformer = TfidfTransformer()
+	X_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
+
+	x_new_counts = count_vect.transform(data_test)
+	x_new_counts_tfidf = tfidf_transformer.transform(x_new_counts)
+	return X_train_tfidf, x_new_counts_tfidf
+
+
 ## Genera la matriz para ES + MIN3
 def genESMIN3(data_train, data_test):
 	count_vect = CountVectorizer(stop_words=stopwordlist, min_df = 3)
@@ -108,9 +121,22 @@ def genESMIN3BIGR(data_train, data_test, ngram):
 	x_new_counts_tfidf = tfidf_transformer.transform(x_new_counts)
 	return X_train_tfidf, x_new_counts_tfidf
 
+## Genera la matriz para ES + MIN3 + [BIGR(2),TRIG(3)...NGRAM(N)]
+def genESMIN3MULTIGR(data_train, data_test, ngram_from, ngram_to):
+	count_vect = CountVectorizer(stop_words=stopwordlist, min_df = 3, ngram_range=(ngram_from,ngram_to))
+	x_train_counts = count_vect.fit_transform(data_train)
+
+	tfidf_transformer = TfidfTransformer()
+	X_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
+
+	x_new_counts = count_vect.transform(data_test)
+	x_new_counts_tfidf = tfidf_transformer.transform(x_new_counts)
+	return X_train_tfidf, x_new_counts_tfidf
+
 
 ## Genera los tokens stemizados
-def stem_tokens(tokens, stemmer):
+stemmer = PorterStemmer()
+def stem_tokens(tokens):
 	    stemmed = []
 	    for item in tokens:
 		stemmed.append(stemmer.stem(item))
@@ -118,13 +144,11 @@ def stem_tokens(tokens, stemmer):
 
 def tokenize_steam(text):
 	    tokens = word_tokenize(text)
-	    stems = stem_tokens(tokens, stemmer)
+	    stems = stem_tokens(tokens)
 	    return stems
 
 ## Genera la matriz para STEM
 def genSTEM(data_train, data_test):
-	stemmer = PorterStemmer()
-
 	count_vect = CountVectorizer(tokenizer=tokenize_steam)
 	x_train_counts = count_vect.fit_transform(data_train)
 
@@ -136,7 +160,8 @@ def genSTEM(data_train, data_test):
 	return X_train_tfidf, x_new_counts_tfidf
 
 ##Genera los tokens lematizados
-def lemma_tokens(tokens, stemmer):
+lmtzr = WordNetLemmatizer()
+def lemma_tokens(tokens):
 	    lemmed = []
 	    for item in tokens:
 		lemmed.append(lmtzr.lemmatize(item))
@@ -144,14 +169,12 @@ def lemma_tokens(tokens, stemmer):
 
 def tokenize_lemma(text):
 	    tokens = word_tokenize(text)
-	    stems = lemma_tokens(tokens, stemmer)
+	    stems = lemma_tokens(tokens)
 	    return stems
 
 
 ## Genera la matriz para LEMMA
 def genLEMMA(data_train, data_test):
-	lmtzr = WordNetLemmatizer()
-
 	count_vect = CountVectorizer(tokenizer=tokenize_lemma)
 	x_train_counts = count_vect.fit_transform(data_train)
 
@@ -189,7 +212,7 @@ def genESMIN3LEMMA(data_train, data_test):
 
 ###Entreno
 clf = MultinomialNB(alpha=0.01)
-x_train, x_test = genESMIN3BIGR(data_train, data_test)
+x_train, x_test = genMIN3BIGR(data_train, data_test, 2)
 clf.fit(x_train, target)
 
 
