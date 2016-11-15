@@ -4,6 +4,7 @@
 # -*- coding: utf-8 -*-,
 import csv
 import re
+from nltk.corpus import stopwords
 
 # Archivo con el preprocesamiento básico
 def basicPrep(inputFile, outputFile, posPred, posText):
@@ -26,6 +27,22 @@ def basicPrep(inputFile, outputFile, posPred, posText):
 				writer.writerow([rowlist[posPred], text])
 				count+=1
 
+# Remueve stop words
+def prepES(inputFile, outputFile, posPred, posText):
+	stopwordlist = stopwords.words('english')
+	count = 0
+	with open(inputFile, 'r') as csvfile1:
+		spamreader = csv.reader(csvfile1)
+		with open(outputFile, 'wb') as csvfile2:
+			writer = csv.writer(csvfile2)
+			for rowlist in spamreader:
+				if(count % 1000 == 0):
+					print(count)
+
+				text = rowlist[posText]
+
+				writer.writerow([rowlist[posPred], text])
+				count+=1
 
 print('Train')
 ####### Me quedo con la prediccion y con el texto

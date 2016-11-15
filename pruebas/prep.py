@@ -6,7 +6,7 @@ import csv
 import re
 from nltk.corpus import stopwords
 
-# Archivo con el preprocesamiento básico
+# Archivo con el preprocesamiento basico
 def basicPrep(inputFile, outputFile, posPred, posText):
 	count = 0
 	with open(inputFile, 'r') as csvfile1:
