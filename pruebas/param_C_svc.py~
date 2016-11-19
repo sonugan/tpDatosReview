@@ -8,6 +8,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn import svm
 from sklearn import cross_validation
+from sklearn import preprocessing
 from nltk.corpus import stopwords
 
 stopwordlist = stopwords.words('english')
@@ -83,9 +84,14 @@ x_train_counts = count_vect.fit_transform(data)
 tfidf_transformer = TfidfTransformer()
 X_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
 
-print('Scores ES + MIN3')
-allScores.append(['ES + MIN3'] + calcScores(ces, X_train_tfidf, target))
+print("Scale matrix")
+X_train_tfidf = preprocessing.scale(X_train_tfidf, with_mean=False)
 
+print('Scores ES + MIN3')
+#allScores.append(['ES + MIN3'] + calcScores(ces, X_train_tfidf, target))
+clf = svm.SVC(C = 1, cache_size=1500)
+clf.fit(X_train_tfidf, target)
+print('Fin train')
 #### STEAM
 stemmer = PorterStemmer()
 def stem_tokens(tokens, stemmer):

@@ -85,7 +85,7 @@ def genESMIN3(data_train, ngram):
 	return X_train_tfidf
 
 ## Genera los tokens stemizados
-	stemmer = PorterStemmer()
+stemmer = PorterStemmer()
 def stem_tokens(tokens):
 	    stemmed = []
 	    for item in tokens:

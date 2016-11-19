@@ -28,9 +28,8 @@ with open('../../Data/train_prep.csv', 'r') as csvfile1:
 	for rowlist in spamreader:
 		if(count % 1000 == 0):
 			print(count)
-		if(count > 0):
-			data_train.append(rowlist[1])
-			target.append(rowlist[0])
+		data_train.append(rowlist[1])
+		target.append(rowlist[0])
 		count+=1
 
 data_test = []
@@ -43,9 +42,8 @@ with open('../../Data/test_prep.csv', 'r') as csvfile1:
 	for rowlist in spamreader:
 		if(count % 1000 == 0):
 			print(count)
-		if(count > 0):
-			data_test.append(rowlist[1])
-			ids.append(rowlist[0])
+		data_test.append(rowlist[1])
+		ids.append(rowlist[0])
 		count+=1
 
 ## Genera la matriz para SP
