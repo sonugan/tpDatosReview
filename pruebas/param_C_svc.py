@@ -32,10 +32,19 @@ with open('../../Data/train_prep.csv', 'r') as csvfile1:
 		count+=1
 ##Split Folds:
 
+####Guardo los datos obtenidos
+def saveScores(scores):
+	with open('scores_train_svc.csv', 'a') as csvfile2:
+		writer = csv.writer(csvfile2)
+		allScores = []
+		for score in scores:
+			allScores.append(score)
+       		writer.writerow(allScores)
+
 def calcScores(ces, data, target):
 	scores = []
 	for c in ces:
-		svc = svm.SVC(C = c)
+		svc = svm.LinearSVC()
 		print("SVC C = :" + str(c))
 		this_scores = cross_validation.cross_val_score(svc, X_train_tfidf, target, cv = 2)
 		print(this_scores)
@@ -43,10 +52,8 @@ def calcScores(ces, data, target):
 	return scores
 
 ces = np.arange(0.1,1.2,0.2)
-allScores = []
-
-### SP
 '''
+### SP
 count_vect = CountVectorizer()
 x_train_counts = count_vect.fit_transform(data)
 
@@ -54,7 +61,7 @@ tfidf_transformer = TfidfTransformer()
 X_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
 
 print('Scores SP')
-allScores.append(['SP'] + calcScores(ces, X_train_tfidf, target))
+saveScores(['SP'] + calcScores(ces, X_train_tfidf, target))
 
 #### ES
 count_vect = CountVectorizer(stop_words=stopwordlist)
@@ -64,7 +71,7 @@ tfidf_transformer = TfidfTransformer()
 X_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
 
 print('Scores ES')
-allScores.append(['ES'] + calcScores(ces, X_train_tfidf, target))
+saveScores(['ES'] + calcScores(ces, X_train_tfidf, target))
 
 #### MIN3
 count_vect = CountVectorizer(min_df = 3)
@@ -74,8 +81,8 @@ tfidf_transformer = TfidfTransformer()
 X_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
 
 print('Scores MIN3')
-allScores.append(['MIN3'] + calcScores(ces, X_train_tfidf, target))
-'''
+saveScores(['MIN3'] + calcScores(ces, X_train_tfidf, target))
+
 #### ES + MIN3
 count_vect = CountVectorizer(stop_words=stopwordlist, min_df = 3)
 x_train_counts = count_vect.fit_transform(data)
@@ -87,10 +94,8 @@ print("Scale matrix")
 X_train_tfidf = preprocessing.scale(X_train_tfidf, with_mean=False)
 
 print('Scores ES + MIN3')
-#allScores.append(['ES + MIN3'] + calcScores(ces, X_train_tfidf, target))
-clf = svm.SVC(C = 1, cache_size=1500)
-clf.fit(X_train_tfidf, target)
 print('Fin train')
+'''
 #### STEAM
 stemmer = PorterStemmer()
 def stem_tokens(tokens, stemmer):
@@ -111,12 +116,12 @@ tfidf_transformer = TfidfTransformer()
 X_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
 
 print('Scores STEAM')
-allScores.append(['STEAM'] + calcScores(ces, X_train_tfidf, target))
+saveScores(['STEAM'] + calcScores(ces, X_train_tfidf, target))
 '''
 #### LEMMA
 lmtzr = WordNetLemmatizer()
 
-def lemma_tokens(tokens, stemmer):
+def lemma_tokens(tokens, lmtzr):
     lemmed = []
     for item in tokens:
         lemmed.append(lmtzr.lemmatize(item))
@@ -124,7 +129,7 @@ def lemma_tokens(tokens, stemmer):
 
 def tokenize_lemma(text):
     tokens = word_tokenize(text)
-    stems = lemma_tokens(tokens, stemmer)
+    stems = lemma_tokens(tokens, lmtzr)
     return stems
 '''
 count_vect = CountVectorizer(tokenizer=tokenize_lemma)
@@ -134,7 +139,7 @@ tfidf_transformer = TfidfTransformer()
 X_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
 
 print('Scores LEMMA')
-allScores.append(['LEMMA'] + calcScores(ces, X_train_tfidf, target))
+saveScores(['LEMMA'] + calcScores(ces, X_train_tfidf, target))
 '''
 #### ES + MIN3 + STEAM
 count_vect = CountVectorizer(stop_words=stopwordlist, min_df = 3, tokenizer=tokenize_steam)
@@ -143,8 +148,9 @@ x_train_counts = count_vect.fit_transform(data)
 tfidf_transformer = TfidfTransformer()
 X_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
 
+
 print('Scores ES + MIN3 + STEAM')
-allScores.append(['ES + MIN3 + STEAM'] + calcScores(ces, X_train_tfidf, target))
+saveScores(['ES + MIN3 + STEAM'] + calcScores(ces, X_train_tfidf, target))
 
 
 #### ES + MIN3 + LEMMA
@@ -155,12 +161,8 @@ tfidf_transformer = TfidfTransformer()
 X_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
 
 print('Scores ES + MIN3 + LEMMA')
-allScores.append(['ES + MIN3 + LEMMA'] + calcScores(ces, X_train_tfidf, target))
+saveScores(['ES + MIN3 + LEMMA'] + calcScores(ces, X_train_tfidf, target))
 
+print("Fin!!")
 
-####Guardo los datos obtenidos
-with open('scores_train_svc.csv', 'wb') as csvfile2:
-	writer = csv.writer(csvfile2)
-	for score in allScores:
-       		writer.writerow(score)
 
