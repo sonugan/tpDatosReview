@@ -1,108 +1,37 @@
-#Preprocesamiento inicial de los sets de train y test
-#Marca las negaciones
-#Elimina HTML, las palabras que tengan numeros en medio y signos de puntuacion y pasa caracteres a minusculas
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+sentences = ["VADER is smart, handsome, and funny.", # positive sentence example
+	"VADER is smart, handsome, and funny!", # punctuation emphasis handled correctly (sentiment intensity adjusted)
+	"VADER is very smart, handsome, and funny.",  # booster words handled correctly (sentiment intensity adjusted)
+	"VADER is VERY SMART, handsome, and FUNNY.",  # emphasis for ALLCAPS handled
+	"VADER is VERY SMART, handsome, and FUNNY!!!",# combination of signals - VADER appropriately adjusts intensity
+	"VADER is VERY SMART, really handsome, and INCREDIBLY FUNNY!!!",# booster words & punctuation make this close to ceiling for score
+	"The book was good.",         # positive sentence
+]
+paragraph = "It was one of the worst movies I've seen, despite good reviews. \
+Unbelievably bad acting!! Poor direction. VERY poor production. \
+The movie was bad. Very bad movie. VERY bad movie. VERY BAD movie. VERY BAD movie!"
 
-# -*- coding: utf-8 -*-,
-import csv
-import re
-from nltk.corpus import stopwords
-from nltk.sentiment import SentimentAnalyzer
-from nltk.sentiment.util import *
+from nltk import tokenize
+lines_list = tokenize.sent_tokenize(paragraph)
+sentences.extend(lines_list)
 
-sentim_analyzer = SentimentAnalyzer()
-negs = sentim_analyzer.all_words([mark_negation(row) for row in [['smart', 'and', 'alert', ',', 'thirteen', 'conversations', 'about', 'one',
-'thing', 'is', 'a', 'small', 'gem', '.']]])
-for neg in negs:
-	print(neg)
-
-'''
-# Archivo con el preprocesamiento basico
-def basicPrep(inputFile, outputFile, posPred, posText):
-	count = 0
-	with open(inputFile, 'r') as csvfile1:
-		spamreader = csv.reader(csvfile1)
-		with open(outputFile, 'wb') as csvfile2:
-			writer = csv.writer(csvfile2)
-			for rowlist in spamreader:
-				if(count % 1000 == 0):
-					print(count)
-
-				text = rowlist[posText]
-
-				text = re.sub(r'<.*?>','', text) #elimino los codigos html
-				text = re.sub(r'^\w*\d\w*','', text) #elimino todas las palabras con numeros en medio
-				text = re.sub(r'[^\w\s]','', text) #elimino los signos de puntuacion
-				text = text.lower()
-
-				writer.writerow([rowlist[posPred], text])
-				count+=1
-
-# Remueve stop words
-def prepES(inputFile, outputFile, posPred, posText):
-	stopwordlist = stopwords.words('english')
-	count = 0
-	with open(inputFile, 'r') as csvfile1:
-		spamreader = csv.reader(csvfile1)
-		with open(outputFile, 'wb') as csvfile2:
-			writer = csv.writer(csvfile2)
-			for rowlist in spamreader:
-				if(count % 1000 == 0):
-					print(count)
-
-				text = rowlist[posText]
-
-				writer.writerow([rowlist[posPred], text])
-				count+=1
-
-print('Train')
-####### Me quedo con la prediccion y con el texto
-basicPrep('../../Data/train.csv', '../../Data/train_prep.csv', 6, 9)
-
-
-print('Test')
-#######Me quedo con el ID del registro y con el texto
-basicPrep('../../Data/test.csv', '../../Data/test_prep.csv', 0, 8)
-'''
-
-'''
-with open('../../Data/train.csv', 'r') as csvfile1:
-	spamreader = csv.reader(csvfile1)
-	with open('../../Data/train_prep.csv', 'wb') as csvfile2:
-		writer = csv.writer(csvfile2)
-		for rowlist in spamreader:
-			if(count % 1000 == 0):
-				print(count)
-
-			text = rowlist[9]
-
-			text = re.sub(r'<.*?>','', text) #elimino los codigos html
-			text = re.sub(r'^\w*\d\w*','', text) #elimino todas las palabras con numeros en medio
-			text = re.sub(r'[^\w\s]','', text) #elimino los signos de puntuacion
-			text = text.lower()
-
-        		writer.writerow([rowlist[6], text])
-			count+=1
-
-#######Me quedo con el ID del registro y con el texto
-
-count = 0
-print('Test')
-with open('../../Data/test.csv', 'r') as csvfile1:
-	spamreader = csv.reader(csvfile1)
-	with open('../../Data/test_prep.csv', 'wb') as csvfile2:
-		writer = csv.writer(csvfile2)
-		for rowlist in spamreader:
-			if(count % 1000 == 0):
-				print(count)
-
-			text = rowlist[8]
-
-			text = re.sub(r'<.*?>','', text) #elimino los codigos html
-			text = re.sub(r'^\w*\d\w*','', text) #elimino todas las palabras con numeros en medio
-			text = re.sub(r'[^\w\s]','', text) #elimino los signos de puntuacion
-			text = text.lower()
-
-        		writer.writerow([rowlist[0], text])
-			count+=1
-
-'''
+tricky_sentences = [
+	"Most automated sentiment analysis tools are shit.",
+	"VADER sentiment analysis is the shit.",
+	"Sentiment analysis has never been good.",
+	"Sentiment analysis with VADER has never been this good.",
+	"Warren Beatty has never been so entertaining.",
+	"but then it breaks",
+	"usually around the time the 90 day warranty expires",
+	"the twin towers collapsed today",
+	"However, Mr. Carter solemnly argues, his client carried out the kidnapping \
+	under orders and in the ''least offensive way possible.''"
+]
+sentences.extend(tricky_sentences)
+sid = SentimentIntensityAnalyzer()
+for sentence in sentences:
+	print(sentence)
+	ss = sid.polarity_scores(sentence)
+	for k in sorted(ss):
+	    print(k + ss[k])
+	print()

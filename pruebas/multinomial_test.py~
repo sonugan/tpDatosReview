@@ -212,7 +212,7 @@ def genESMIN3LEMMA(data_train, data_test):
 
 ###Entreno
 clf = MultinomialNB(alpha=0.01)
-x_train, x_test = genMIN3BIGR(data_train, data_test, 2)
+x_train, x_test = genESMIN3MULTIGR(data_train, data_test, 1, 2)
 clf.fit(x_train, target)
 
 
