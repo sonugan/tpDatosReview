@@ -11,9 +11,15 @@ from nltk.corpus import stopwords
 stopwordlist = stopwords.words('english')
 
 clf = svm.LinearSVC()
+if False:
+    #[ 0.82027483  0.82085535  0.82068147]
+    target, data = helper.get_train_data('../../Data/train_prep_emot.csv', vectorizer = helper.get_vectorizer(min_df = 3, ngram_range = (2,2)), pred_pos=0, text_pos=1,tf_idf=True, remove_header=True)
+    print "EMO + NSP + NHTML + LOW + MIN3 + BIG + TFIDF"
+    this_scores = cross_validation.cross_val_score(clf, data, target, cv = 3)
+    print(this_scores)
 if True:
-    #
-    target, data = helper.get_train_data('../../Data/train_prep.csv', vectorizer = helper.get_vectorizer(min_df = 3, ngram_range = (2,2)), pred_pos=6, text_pos=9,tf_idf=True, remove_header=True)
+    #[ 0.82023524  0.82082237  0.82073424]
+    target, data = helper.get_train_data('../../Data/train_prep.csv', vectorizer = helper.get_vectorizer(min_df = 3, ngram_range = (2,2)), pred_pos=0, text_pos=1,tf_idf=True, remove_header=True)
     print "NSP + NHTML + LOW + MIN3 + BIG + TFIDF"
     this_scores = cross_validation.cross_val_score(clf, data, target, cv = 3)
     print(this_scores)
