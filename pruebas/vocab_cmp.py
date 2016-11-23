@@ -3,10 +3,78 @@ import helpers as helper
 import re
 import csv
 import unicodecsv as csv
+import prep_divided
 from nltk.corpus import stopwords
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
 
 stopwordlist = stopwords.words('english')
 
+
+train_path = '../../Data/train_prep'
+test_path='../../Data/test_prep'
+vocabulario = None
+##Separo un set de test
+if True:
+    train_path = '../../Data/train-train_prep_voc'
+    test_path='../../Data/test-test_prep_voc'
+    
+    target, data = helper.get_data('../../Data/train_prep.csv')
+    print "split!!"
+
+    x_train, x_test, y_train, y_test = train_test_split(data, target, random_state=0)
+    
+    with open(test_path + '.csv', 'wb') as csvt:
+        writer = csv.writer(csvt)
+        for idx, x in enumerate(x_test):
+            writer.writerow([y_test[idx], x])
+    
+    with open(train_path + '.csv', 'wb') as csvt:
+        writer = csv.writer(csvt)
+        for idx, x in enumerate(x_train):
+            writer.writerow([y_train[idx], x])       
+
+    #Armo los diccionarios y elimino las claves que no en 5 del resto de las clases
+    voc = dict()
+    voc['1'] = dict()
+    voc['2'] = dict()
+    voc['3'] = dict()
+    voc['4'] = dict()
+    voc['5'] = dict()
+    for idx, x in enumerate(x_train):
+        if x not in voc[y_train[idx]]:
+            voc[y_train[idx]] = x
+    count = 0
+    vocab = dict()
+    for c in ['1','2','3','4']:
+        for x in voc[c]:
+            if count % 1000 == 0:
+                print count
+            if x not in voc['5'] and x not in vocab:
+                vocab[x] = 1
+            count += 1
+    
+    vocabulario = []
+    with open(train_path + 'voc--.csv', 'wb') as csvo:
+        writero = csv.writer(csvo)
+        for x in vocab:
+            vocabulario.append(x)
+            writero.writerow([x])
+if True:
+    print "Obtengo los datos"
+    x_target, x_data = helper.get_train_data(train_path + '.csv', vectorizer = helper.get_vectorizer(vocabulary=vocabulario, min_df = 3), pred_pos=0, text_pos=1,tf_idf=True, remove_header=False)
+    y_target, y_data = helper.get_train_data(test_path + '.csv', vectorizer = helper.get_vectorizer(vocabulary=vocabulario ,min_df = 3), pred_pos=0, text_pos=1,tf_idf=True, remove_header=False)
+    print "LOW + MIN3 + BIG + TFIDF"
+    clf = MultinomialNB(alpha=0.01)
+    clf.fit(x_data, x_target)
+    y_predicted = clf.predict(y_data)
+    print(confusion_matrix(y_target, y_predicted))
+    print(accuracy_score(y_target, y_predicted))
+    
 if False:
     count = 0
     with open('../../Data/train_prep_voc1.csv', 'r') as csv4:
@@ -102,7 +170,7 @@ if False:
                 count += 1
     
 #Elimino las palabras que aparecen mas de una vez                
-if True:
+if False:
     count = 0
     words = dict()
     with open('../../Data/train_prep_voc_all-5.csv', 'r') as csv4:

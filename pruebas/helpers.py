@@ -69,13 +69,13 @@ def get_vectorized_data(path, filter_list, pred_pos = 0, text_pos = 1, tf_idf=Fa
 #ES + MIN3: stop_words != None, min_df = 3
 #STEAM: stem = True
 #LEMMA: lemma = True
-def get_vectorizer(stop_words=None, min_df = 3, stem=False, lemma=False, lowercase=True, ngram_range = (1,1)):
+def get_vectorizer(stop_words=None, min_df = 3, stem=False, lemma=False, lowercase=True, ngram_range = (1,1), vocabulary = None):
     tokenizer = None
     if stem:
         tokenizer = tokenize_steam
     if lemma:
         tokenizer = tokenize_lemma
-    return CountVectorizer(stop_words=stop_words, min_df=min_df, tokenizer=tokenizer, lowercase=lowercase, ngram_range=ngram_range)
+    return CountVectorizer(stop_words=stop_words, min_df=min_df, tokenizer=tokenizer, lowercase=lowercase, ngram_range=ngram_range, vocabulary= vocabulary)
 
 #### STEAM
 stemmer = PorterStemmer()
@@ -113,7 +113,7 @@ def saveKaggleFile(path, predictions, ids):
     with open(path, 'wb') as csvfile2:
         writer = csv.writer(csvfile2)
         writer.writerow(['Id', 'Prediction'])
-        for idx, prediction in predictions:
+        for idx, prediction in enumerate(predictions):
             writer.writerow([str(ids[idx]), str(prediction)])
             if(prediction == '1'):
                 count1+=1
@@ -124,7 +124,7 @@ def saveKaggleFile(path, predictions, ids):
             if(prediction == '4'):
                 count4+=1
             if(prediction == '5'):
-                count1+=1
+                count5+=1
 
     print('Resultados:')
     print('Cantidad de 1:' + str(count1))
